@@ -10,7 +10,7 @@ body,td,th,p{
 body {
 	background-color: #fdfdfd;
 	margin: 0;
-	position:relative;
+	position: relative;
 }
 ul, li {
 	font-family: Arial, Helvetica, sans-serif;
@@ -44,7 +44,7 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   color: #aaa;
   font-size: 8pt;
   letter-spacing: 1px;
-  padding: 25px;
+  padding: 25px 0 25px 0;
   text-align: center;
   text-transform: uppercase;
 }
@@ -54,19 +54,21 @@ nav {
   height: 80px;
   background-color: #252831;
   text-align:center;
+
 }
 nav h1 {
-  margin: auto;
+  margin: 0 auto;
+  padding-top: 10px;
 }
 nav h1 a {
   color: #fff;
   font-size: 14pt;
   font-weight: 200;
-  letter-spacing: 10px;
+  letter-spacing: 0.5vw;
   text-transform: uppercase;
 }
 #breadcrumb {
-    padding: 10px 40px 16px;
+    padding: 10px 0 16px 0px;
     list-style: none;
     background-color: #eee;
     font-size: 17px;
@@ -102,21 +104,27 @@ nav h1 a {
   height: 400px;
   width: 100%;
   background-color: #ccc;
+
 }
 /* ====================== Restaurant Filtering ====================== */
 .filter-options {
   width: 100%;
-  height: 50px;
   background-color: #3397DB;
   align-items: center;
+
+}
+#filter-header {
+  margin-left: 10%;
+  display: inline-flex;
 }
 .filter-options h2 {
   color: white;
-  font-size: 1rem;
+  font-size: 1.3rem;
   font-weight: normal;
   line-height: 1;
-  margin: 0 20px;
+  padding-top: 15px;
 }
+
 .filter-options select {
   background-color: white;
   border: 1px solid #fff;
@@ -127,7 +135,12 @@ nav h1 a {
   margin: 10px;
   padding: 0 10px;
   width: 200px;
+  margin-left: 10px;
+
 }
+
+
+
 
 /* ====================== Restaurant Listing ====================== */
 #restaurants-list {
@@ -136,6 +149,8 @@ nav h1 a {
   margin: 0;
   padding: 30px 15px 60px;
   text-align: center;
+  display: flex;
+  flex-wrap: wrap;
 }
 #restaurants-list li {
   background-color: #fff;
@@ -146,6 +161,12 @@ nav h1 a {
   padding: 0 30px 25px;
   text-align: left;
   width: 270px;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+#restaurants-list li:last-child{
+  margin-left: 3vw;
 }
 #restaurants-list .restaurant-img {
   background-color: #ccc;
@@ -183,11 +204,15 @@ nav h1 a {
 }
 
 /* ====================== Restaurant Details ====================== */
+
+/*.inside {
+  overflow-x: hidden;
+}*/
 .inside header {
-  position: fixed;
   top: 0;
   width: 100%;
   z-index: 1000;
+  position: fixed;
 }
 .inside #map-container {
   background: blue none repeat scroll 0 0;
@@ -205,7 +230,7 @@ nav h1 a {
 .inside #footer {
   bottom: 0;
   position: absolute;
-  width: 50%;
+  width: 100%;
 }
 #restaurant-name {
   color: #f18200;
@@ -258,14 +283,14 @@ nav h1 a {
 }
 #reviews-list li {
   background-color: #fff;
-    border: 2px solid #f3f3f3;
+  border: 2px solid #f3f3f3;
   display: block;
   list-style-type: none;
   margin: 0 0 30px;
   overflow: hidden;
   padding: 0 20px 20px;
   position: relative;
-  width: 85%;
+  width: 80%;
 }
 #reviews-list li p {
   margin: 0 0 10px;
@@ -273,3 +298,83 @@ nav h1 a {
 #restaurant-hours td {
   color: #666;
 }
+
+@media (max-width: 940px) {
+  .inside #map-container {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    top: 131.5px;
+  }
+  #breadcrumb {
+    width: 100%;
+  }
+  .inside header {
+    position: absolute;
+  }
+  #restaurant-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  #restaurant-container h1{
+    width: 100%;
+
+  }
+  #img-cuisine {
+    width: 50%;
+  }
+  #address-hours {
+    width: 45%;
+  }
+  #reviews-container {
+    width: calc(100% - 80px);
+  }
+  #reviews-list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  #reviews-list li {
+    width: 37%;
+    margin-right: 5vw;
+  }
+
+  
+
+}
+
+@media (max-width: 640px)
+{
+  .filter-options{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  #filter-header{
+    margin-left: 10px;
+  }
+  #restaurant-container {
+    width: 100%;
+    display: block;
+  }
+  #address-hours {
+    width: 90%;
+  }
+  #img-cuisine {
+    width: 70%;
+  }
+  #reviews-list li {
+    width: 70%;
+    margin-right: 0 auto;
+  }
+
+}
+
+@media (max-width: 560px) {
+  #filter-header {
+    width: 100%;
+  }
+  .filter-options select{
+    margin-left: 30px;
+  }
+}
+
