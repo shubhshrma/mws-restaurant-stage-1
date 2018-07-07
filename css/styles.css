@@ -73,7 +73,7 @@ nav h1 a {
     background-color: #eee;
     font-size: 17px;
     margin: 0;
-    width: calc(50% - 80px);
+    width: calc(50%);
 }
 
 /* Display list items side by side */
@@ -111,6 +111,8 @@ nav h1 a {
   width: 100%;
   background-color: #3397DB;
   align-items: center;
+  display: flex;
+  flex-wrap: wrap;
 
 }
 #filter-header {
@@ -123,6 +125,22 @@ nav h1 a {
   font-weight: normal;
   line-height: 1;
   padding-top: 15px;
+}
+/*
+.filter-options label {
+
+}
+*/
+.filter-select {
+  width: 300px;
+  margin-left: 10px;
+}
+
+.filter-select label {
+  margin-left: 10px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 100;
 }
 
 .filter-options select {
@@ -211,7 +229,7 @@ nav h1 a {
 .inside header {
   top: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 100;
   position: fixed;
 }
 .inside #map-container {
@@ -221,6 +239,7 @@ nav h1 a {
   right: 0;
   top: 80px;
   width: 50%;
+  z-index: 1000;
 }
 .inside #map {
   background-color: #ccc;
@@ -231,6 +250,7 @@ nav h1 a {
   bottom: 0;
   position: absolute;
   width: 100%;
+  z-index: 2000;
 }
 #restaurant-name {
   color: #f18200;
@@ -299,6 +319,30 @@ nav h1 a {
   color: #666;
 }
 
+/*=========================== Tab Focus highlight  =======================*/
+
+img[class^="leaflet-marker-icon"]:focus {
+  border: 2px solid red;
+}
+
+a[class^="leaflet-control-zoom"]:focus {
+  border: 1px solid red;
+}
+
+select[id$="-select"]:focus {
+  border: 2px solid red;
+}
+
+#restaurants-list li a:focus {
+  border: 2px solid red;
+}
+
+#breadcrumb li a:focus {
+  border: 2px solid red;
+}
+
+/*========================= Media Queries ========================*/
+
 @media (max-width: 940px) {
   .inside #map-container {
     width: 100%;
@@ -338,20 +382,37 @@ nav h1 a {
     width: 37%;
     margin-right: 5vw;
   }
+  #filter-header{
+    margin-left: 10px;
+  }
+  .filter-options{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .filter-select {
+    width: 30%;
+  }
+  
 
+}
+
+@media (max-width: 724px) {
+  #filter-header {
+    width: 100%;
+  }
+  .filter-options select{
+    margin-left: 30px;
+  }
+  .filter-select {
+    width: 40%;
+  }
   
 
 }
 
 @media (max-width: 640px)
 {
-  .filter-options{
-    display: flex;
-    flex-wrap: wrap;
-  }
-  #filter-header{
-    margin-left: 10px;
-  }
+  
   #restaurant-container {
     width: 100%;
     display: block;
@@ -375,6 +436,9 @@ nav h1 a {
   }
   .filter-options select{
     margin-left: 30px;
+  }
+  .filter-select {
+    width: 100%;
   }
 }
 
