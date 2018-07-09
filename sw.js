@@ -50,22 +50,23 @@ self.addEventListener('fetch', function(e) {
 
 				var requestClone = e.request.clone();
 				return fetch(requestClone)
-					.then(function(response) {
+					.then(function(res) {
 
-						if ( !response ) {
+						if ( !res || res.status !== 200 || res.type !== 'basic') {
 							console.log("[ServiceWorker] No response from fetch ")
-							return response;
+							return res;
 						}
 
-						var responseClone = response.clone();
+						var responseClone = res.clone();
 						caches.open(cacheName).then(function(cache) {
 
 							// Put the fetched response in the cache
 							cache.put(e.request, responseClone);
 							console.log('[ServiceWorker] New Data Cached', e.request.url);
-							return response;
-			
-				        }); 
+							
+							return(res);
+				        });
+				         
 
 					})
 					.catch(function(err) {
