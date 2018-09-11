@@ -12,7 +12,8 @@ var cacheFiles = [
 	'/css/styles.css',
 	'https://unpkg.com/leaflet@1.3.1/dist/leaflet.css',
 	'https://unpkg.com/leaflet@1.3.1/dist/leaflet.js',
-	'/js/dbhelper.js'
+	'/js/dbhelper.js',
+	'/manifest.json'
 ]
 
 
@@ -28,7 +29,7 @@ self.addEventListener('install', function(e) {
 			console.log('[ServiceWorker] Caching cacheFiles');
 			return cache.addAll(cacheFiles);
 	    })
-);
+	);
 })
 
 self.addEventListener('activate', function(e) {

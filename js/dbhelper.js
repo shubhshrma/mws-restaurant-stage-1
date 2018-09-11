@@ -3,6 +3,22 @@
  */
 class DBHelper {
 
+  static imageAlt(id) {
+    let images_alt = {
+      1: "Three rows of seating. Both rows other than the centre attached to walls having cuishioned sofa seats. Beautiful lighting environment with ambient yellow light.",
+      2: "photograph of a pizza seeming really delicious!",
+      3: "photograph of a beautiful interior of a restaurant consisting of wooden seating and in chair cooking facility.",
+      4: "Street photo showing three people walking around the corner restaurant.",
+      5: "Interior photo showing the counter and many people seated.",
+      6: "photo showing a fairly populated place with square tables and families enjoying the meal.",
+      7: "Exterior photo with two men passing by the shop and customers enjoying the food visible through the glass front.",
+      8: "Photo of the banner outside the place with the Dutch written on it.",
+      9: "Photo of some Asian people eating with a woman using her phone in the centre.",
+      10: "Interior of the bar with white chairs and silver counter."
+    }
+    return images_alt[id];
+  }
+
   /**
    * Database URL.
    * Change this to restaurants.json file location on your server.
@@ -198,7 +214,7 @@ class DBHelper {
    * Restaurant image alt text.
    */
   static imageAltForRestaurant(restaurant) {
-    return (`${restaurant.photograph_alt}`);
+    return (`${DBHelper.imageAlt(restaurant.photograph)}`);
   }
 
   /**
