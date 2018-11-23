@@ -221,6 +221,27 @@ nav h1 a {
   text-transform: uppercase;
 }
 
+.favorite-button {
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 40px;
+  margin: 2px 5px 10px;
+  border-radius: 50%;
+}
+
+.favorite_no{
+  color: #191818 !important;
+
+}
+
+.favorite_yes{
+  color: #F71111 !important;
+}
+
 /* ====================== Restaurant Details ====================== */
 
 /*.inside {
@@ -248,7 +269,7 @@ nav h1 a {
 }
 .inside #footer {
   bottom: 0;
-  position: absolute;
+  position: relative;
   width: 100%;
   z-index: 2000;
 }
@@ -304,6 +325,7 @@ nav h1 a {
 #reviews-list li {
   background-color: #fff;
   border: 2px solid #f3f3f3;
+  border-radius: 5px;
   display: block;
   list-style-type: none;
   margin: 0 0 30px;
@@ -365,8 +387,11 @@ select[id$="-select"]:focus {
     width: 100%;
 
   }
+  #restaurant-name{
+    width: 100%;
+  }
   #img-cuisine {
-    width: 50%;
+    width: 100%;
   }
   #address-hours {
     width: 45%;

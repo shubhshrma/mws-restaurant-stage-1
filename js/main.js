@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   initMap(); // added 
   fetchNeighborhoods();
   fetchCuisines();
-  registerServiceWorker();
+  //registerServiceWorker();
 });
 
 /**
@@ -182,9 +182,37 @@ createRestaurantHTML = (restaurant) => {
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more)
 
+  const favButton = document.createElement('button');
+  favButton.innerHTML = "&#9829";
+  favButton.classList.add("favorite-button");
+  favButton.addEventListener('click', (event) => {
+
+    const isFav = !restaurant.is_favorite;
+    DBHelper.updateFavoriteStatus(restaurant.id, isFav);
+    restaurant.is_favorite = isFav;
+
+    toggleFavClass(favButton, isFav);
+  });
+  toggleFavClass(favButton, restaurant.is_favorite)
+  li.append(favButton);
+
   return li
 }
 
+toggleFavClass = (e, fav) => {
+  if (!fav){
+    e.classList.remove('favorite_yes');
+    e.classList.add('favorite_no');
+    e.setAttribute('aria-label', 'mark as favorite');
+
+  }else {
+
+    e.classList.remove('favorite_no');
+    e.classList.add('favorite_yes');
+    e.setAttribute('aria-label', 'remove as favorite');
+
+  }   
+}
 /**
  * Add markers for current restaurants to the map.
  */
@@ -212,17 +240,4 @@ addMarkersToMap = (restaurants = self.restaurants) => {
 } */
 
 
-// Register Service Worker
-registerServiceWorker = () => {
-  
-  if(navigator.serviceWorker) {
-    navigator.serviceWorker.register("./sw.js", {scope: '/'})
-     .then(function(reg){
-      console.log("[ServiceWorker]registration successful")
-     })
-     .catch(function(err) {
-      console.log('registration failed', err);
-     });
 
-  }
-}

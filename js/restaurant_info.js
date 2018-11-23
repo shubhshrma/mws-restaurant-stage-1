@@ -1,12 +1,68 @@
 let restaurant;
 var newMap;
 
-/**
- * Initialize map as soon as the page is loaded.
- */
 document.addEventListener('DOMContentLoaded', (event) => {  
   initMap();
 });
+
+window.addEventListener('load', () => {
+  updateOnlineStatus = (event) => {
+    DBHelper.updateOnlineStatus();
+  }
+  window.addEventListener('online',  updateOnlineStatus);
+});
+
+function submitReview() {
+  event.preventDefault();
+  let reviewData = getFormData();
+
+  if (!navigator.onLine){
+    const offlineReviews = DBHelper.setLocalStorage(JSON.stringify(reviewData));
+    console.log("Offline review saved", reviewData);
+
+  }
+  else {
+    DBHelper.addReviews(reviewData);
+    console.log("Review uploaded: ", reviewData); 
+  }
+}
+
+const submitButton = document.getElementById('submit-button');
+ 
+ function getFormData() {
+  const form = document.getElementById("reviews-form");
+  let reviewerName = document.getElementById('reviewer-name').value;
+  const comment = form.textarea.value;
+  const ratings = document.querySelectorAll('input[type="radio"]');
+  const restaurantId = window.location.href.split('=')[1];
+  let rating = 0;
+  let ratingId;
+  for (var item of ratings) {
+    if (item.checked == true) {
+      ratingId = item.id;
+      rating = item.value;
+      item.checked = false;
+      break;
+    }
+  }
+
+  const body = {
+    'restaurant_id': parseInt(restaurantId),
+    'name': reviewerName,
+    'rating': rating,
+    'comments': comment,
+    'createdAt': Date.now(),
+    'updatedAt': Date.now()
+  }
+
+  form.textarea.value = '';
+  document.getElementById('reviewer-name').value = '';
+
+  const review = createReviewHTML(body);
+  const ul = document.getElementById('reviews-list');
+  ul.appendChild(review);
+  return body;
+};
 
 /**
  * Initialize leaflet map
@@ -129,19 +185,33 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
+  title.style.color = 'white';
   container.appendChild(title);
 
-  if (!reviews) {
-    const noReviews = document.createElement('p');
-    noReviews.innerHTML = 'No reviews yet!';
-    container.appendChild(noReviews);
-    return;
-  }
+  const id = parseInt(getParameterByName('id'));
+
   const ul = document.getElementById('reviews-list');
-  reviews.forEach(review => {
+  let getReviews = DBHelper.fetchReviewsById(id);
+  // send offline reviews to the server.
+  if(navigator.onLine)
+    DBHelper.updateOnlineStatus();
+
+  let offlineReviews= DBHelper.getLocalDataByID('reviews', 'restaurant', id);
+  console.log('Looking for local storedReviews: ', offlineReviews);
+  offlineReviews.then((storedReviews) => {
+  console.log('Looking for local data in offlineReviews: ',storedReviews);
+  storedReviews.reverse().forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
-  container.appendChild(ul);
+  container.appendChild( ul);
+  //return Promise.resolve(storedReviews);
+  }).catch((error) => {
+      console.log('No reviews yet! ', error.message);
+      const noReviews = document.createElement('p');
+      noReviews.innerHTML = 'No reviews yet!';
+      container.appendChild( noReviews);
+          
+    });
 }
 
 /**
@@ -154,7 +224,8 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  let dateObject = new Date(review.createdAt);
+  date.innerHTML =`Date: ${dateObject.toDateString()}`;
   li.appendChild(date);
 
   const rating = document.createElement('p');
@@ -193,3 +264,7 @@ getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+
+
+
