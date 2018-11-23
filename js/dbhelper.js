@@ -30,20 +30,21 @@ static openObjectStore  (db, storeName, transactionMode = 'readonly')  {
 
   static get openDatabase () {
     if (!navigator.serviceWorker) {
-    return Promise.resolve();
+      return Promise.resolve();
    }
  
   if (!('indexedDB' in window)) {return null;}
-  
   return idb.open('mws-restaurant-webapp', 1, (upgradeDb) =>  {
       switch(upgradeDb.oldVersion) {
         case 0:
           const store = upgradeDb.createObjectStore('restaurants', {
-            keyPath: 'id'});
+            keyPath: 'id'
+          });
          
         case 1:
         const reviewsStore = upgradeDb.createObjectStore('reviews', {
-          keyPath: 'id'});
+          keyPath: 'id'
+        });
         reviewsStore.createIndex('restaurant','restaurant_id');
         }
 
@@ -51,10 +52,8 @@ static openObjectStore  (db, storeName, transactionMode = 'readonly')  {
 };
 
 static updateIndexedDB(id){
-  
-    const url = `http://localhost:1337/reviews/?restaurant_id=${id}`;
-    let dbPromise = this.openDatabase;
-  
+  const url = `http://localhost:1337/reviews/?restaurant_id=${id}`;
+    const dbPromise = this.openDatabase;
     this.serverFetch(url,{
       credentials: 'include'
     })
@@ -62,19 +61,14 @@ static updateIndexedDB(id){
         dbPromise
            .then((db) => {
                if (!db) return;
-
                const store = this.openObjectStore(db, 'reviews', 'readwrite');
-
                if (Array.isArray(reviews)){
                 reviews.forEach(review => {
                   store.put(review);
                 });
-
-               }else {
-                store.put(reviews);
                }
-                console.log('Restaurant reviews added: ', reviews);
-                return Promise.resolve(reviews);
+               else store.put(reviews);
+               return Promise.resolve(reviews);
            }); 
       })
       .catch((error) => {
@@ -83,62 +77,52 @@ static updateIndexedDB(id){
           console.log('Looking for data in indexedDB: ');
           return Promise.resolve(storedReviews);
         });
-          
       });
     
   }
 
   static addReviews(review){
-
-    const headers = new Headers({'Content-Type': 'application/json'});
     const body = JSON.stringify(review);
-    let options = {
+    var options = {
 
       credentials: 'same-origin',
       mode: 'cors',
       cache: 'no-cache',
       method: 'POST',
-      headers: headers,
+      headers: new Headers({'Content-Type': 'application/json'}),
       body: body
    
     };
-    
     this.serverFetch(`http://localhost:1337/reviews/`, options)
       .then((data) => {
         console.log("Review added to server: ", data.restaurant_id);
         this.updateIndexedDB(data.restaurant_id);                   
       })
       .catch(error => console.log('Fail to add a review: ', error.message));
-        
   }
 
 static getLocalStorage() {
-      const storedReviews = localStorage.getItem('offlineData');
-      console.log("Offline reviews found: ", storedReviews);
-      return storedReviews;
+  const storedReviews = localStorage.getItem('offlineData');
+  console.log("Offline reviews found: ", storedReviews);
+  return storedReviews;
 }
-static setLocalStorage(offlineData) {
-    const offlineReviews = localStorage.setItem('offlineData', offlineData);
-    console.log("Offline reviews saved in localStorage: ", offlineReviews);
-    return offlineReviews;
-    
+static setLocalStorage(data) {
+  const offlineReviews = localStorage.setItem('offlineData', data);
+  return offlineReviews;
 }
 
 static updateOnlineStatus(){
-  const  offlineData = JSON.parse(DBHelper.getLocalStorage());
+  const offlineData = JSON.parse(DBHelper.getLocalStorage());
   if (localStorage.length) {
     this.addReviews(offlineData);
     console.log('Data sent to server: ', offlineData);
     localStorage.clear();
   }
-
 } 
  
  static fetchReviewsById(id){
-    
-    
     const url = `http://localhost:1337/reviews/?restaurant_id=${id}`;
-    let dbPromise = this.openDatabase;
+    const dbPromise = this.openDatabase;
   
     this.serverFetch(url, {
       credentials: 'include'
@@ -147,19 +131,15 @@ static updateOnlineStatus(){
             dbPromise
                .then((db) => {
                    if (!db) return;
-
                    const store = this.openObjectStore(db, 'reviews', 'readwrite');
-
                    if (Array.isArray(reviews)){
                       reviews.forEach(review => {
-                        store.put(review);
+                      store.put(review);
                    });
-
-                   }else {
-                      store.put(reviews);
-                   }
-                    console.log('Restaurant reviews added: ', reviews);
-                    return Promise.resolve(reviews);
+                  }
+                  else store.put(reviews);
+                  console.log('Restaurant reviews added: ', reviews);
+                  return Promise.resolve(reviews);
                }); 
       })
       .catch((error) => {
@@ -175,30 +155,26 @@ static updateOnlineStatus(){
   }    
   
  static serverFetch(url,options) {
-    return fetch(url, options).then(response => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      return response.json();
-    });
+  return fetch(url, options).then(response => {
+    if (!response.ok) {
+      throw Error(response.statusText);
+    }
+    return response.json();
+  });
 }
 
   static updateFavoriteStatus(restaurantID, isFav){
-    console.log('Updated favorite status of restaurant id', restaurantID);
+    console.log('Updating favorite status of restaurant id: ', restaurantID);
     const URL = `${this.DATABASE_URL}/${restaurantID}`;
-   
-    const isFavoriteData = {
-        is_favorite: isFav
-    };
-     
-    const headers = new Headers({'Content-Type': 'application/json'});
-    const body = JSON.stringify(isFavoriteData);
+    const body = JSON.stringify({
+      is_favorite: isFav
+    });
     let options = {
       method: 'PUT',
       mode: 'cors',
-      cache: "no-cache",
+      cache: 'no-cache',
       credentials: 'same-origin',
-      headers: headers,
+      headers: new Headers({'Content-Type': 'application/json'}),
       body: body
    
     };
@@ -207,23 +183,21 @@ static updateOnlineStatus(){
          console.log("Favorite update succeeded")
       })
       .catch(error => console.log('Erro', error.message));
+    }
 
-  }
-  static getLocalDataByID(storeName, indexName, indexID){
+  static getLocalDataByID(storeName, indexName, indexId){
     const dbPromise = this.openDatabase;
-    let id = parseInt(indexID);
+    let id = parseInt(indexId);
     return dbPromise.then((db) => {
-          if (!db) return;
-          const store = this.openObjectStore(db, storeName, 'readonly');
-          const storeIndex = store.index(indexName);
-          
-          return Promise.resolve(storeIndex.getAll(id));
-        });
+      if (!db) return;
+      const store = this.openObjectStore(db, storeName, 'readonly');
+      const storeIndex = store.index(indexName);
+      return Promise.resolve(storeIndex.getAll(id));
+    });
 
   }
 
   static getLocalData(db_promise) {
-    
     return db_promise.then((db) => {
       if (!db) return;
       const store = this.openObjectStore(db, 'restaurants', 'readonly');
@@ -232,17 +206,15 @@ static updateOnlineStatus(){
   }
 
   static saveData(restaurantsJSON) {
-    
     let restaurants = restaurantsJSON;
     console.log('restaurantsJSON ', restaurantsJSON);
     const dbPromise = this.openDatabase;
 
      dbPromise.then(db => {
      const store = this.openObjectStore(db, 'restaurants', 'readwrite');
-
-       restaurants.forEach((restaurant) => {
-        store.put(restaurant);
-       })
+      restaurants.forEach((restaurant) => {
+      store.put(restaurant);
+     })
      });
   }
 
@@ -262,10 +234,10 @@ static get getCachedMessages () {
   static fetchRestaurants(callback) {
    const db_promise = this.openDatabase;
     const URL = this.DATABASE_URL;
-    const option = {
-    credentials: 'include'
-    } 
-     this.serverFetch(URL, option)
+      
+     this.serverFetch(URL, {
+      credentials: 'include'
+      })
         .then(json => {
           const restaurants = json;
           this.saveData(restaurants);

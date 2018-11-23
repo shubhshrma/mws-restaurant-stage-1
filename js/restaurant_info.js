@@ -19,7 +19,6 @@ function submitReview() {
   if (!navigator.onLine){
     const offlineReviews = DBHelper.setLocalStorage(JSON.stringify(reviewData));
     console.log("Offline review saved", reviewData);
-
   }
   else {
     DBHelper.addReviews(reviewData);
@@ -192,25 +191,23 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 
   const ul = document.getElementById('reviews-list');
   let getReviews = DBHelper.fetchReviewsById(id);
-  // send offline reviews to the server.
+  //If network is found, update online status 
   if(navigator.onLine)
     DBHelper.updateOnlineStatus();
 
   let offlineReviews= DBHelper.getLocalDataByID('reviews', 'restaurant', id);
-  console.log('Looking for local storedReviews: ', offlineReviews);
   offlineReviews.then((storedReviews) => {
-  console.log('Looking for local data in offlineReviews: ',storedReviews);
+  console.log('Data in offline reviews: ', storedReviews);
   storedReviews.reverse().forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
-  container.appendChild( ul);
-  //return Promise.resolve(storedReviews);
-  }).catch((error) => {
+  container.appendChild(ul);
+  })
+    .catch((error) => {
       console.log('No reviews yet! ', error.message);
       const noReviews = document.createElement('p');
       noReviews.innerHTML = 'No reviews yet!';
       container.appendChild( noReviews);
-          
     });
 }
 
